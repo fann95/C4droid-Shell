@@ -8,7 +8,7 @@ Installation
 
 ```sh
 1.  Open Makefile in C4droid and compile.
-2.  Add **(c4droid:DATADIR)c4dsh**  in Preferences->Shell path
-3.  Add **clear;**  in Preferences->Autorun command
+2.  Add *(c4droid:DATADIR)c4dsh*  in Preferences->Shell path
+3.  Add *clear;*  in Preferences->Autorun command
 ```
 
