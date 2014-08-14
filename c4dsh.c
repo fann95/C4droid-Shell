@@ -159,7 +159,22 @@ main(int argc, char **argv)
 		
 		config.name[16]="PERL";
 		config.value[16]="/data/data/com.n0n3m4.droidc/usr/bin/perl";
-		configsize = 17;
+		
+		config.name[17] = "GIT_SSL_CAINFO";
+		config.value[17] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
+		config.name[18] = "GIT_CURL_VERBOSE";
+		config.value[18] = "1";
+		config.name[19] = "CURL_CA_BUNDLE";
+		config.value[19] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
+		config.name[20] = "SSL_CERT_FILE";
+		config.value[20] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
+		config.name[21] = "SSL_CERT_DIR";
+		config.value[21] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs";
+		config.name[22] = "CMAKE_ROOT";
+		config.value[22] = "/mnt/sdcard/C4droid_EXT";
+		config.name[23] = "SHELL-G";
+		config.value[23] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
+		configsize = 24;
 		
 	}
 	
