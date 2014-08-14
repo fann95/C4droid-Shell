@@ -13,6 +13,7 @@ Shell and tools for C4droid
 * bison-3.0.2
 * help2man-1.43.3
 * openssl-1.0.1c
+* sqlite3-3.8.5
 * libssh2-1.4.3
 * curl-7.37.1
 * git-2.0
