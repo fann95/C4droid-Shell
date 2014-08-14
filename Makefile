@@ -2,7 +2,7 @@ PREFIX   := /data/data/com.n0n3m4.droidc
 INCLUDES := -I$(PWD)/include
 LIBS     :=-L$(PWD)/lib -lreadline -lhistory -lncurses
 
-all: c4dsh install install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git
+all: c4dsh install install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3
 
 	
 c4dsh: c4dsh.o
@@ -54,3 +54,7 @@ install-curl: install-ssl install-ssh2
 install-git: install-ssl install-ssh2 install-curl
 	if ! [ -f "/data/data/com.n0n3m4.droidc/usr/bin/git" ]; then cd $(PREFIX) && tar -zxf $(PWD)/App/Git-2.0/usr.tar.gz;fi;
 	if ! [ -d "/mnt/sdcard/C4droid_EXT/lib/perl/5.16.0/Git" ]; then cd /mnt/sdcard && tar -zxf $(PWD)/App/Git-2.0/C4droid_EXT.tar.gz;fi;
+
+install-sqlite3:
+	if ! [ -f "/data/data/com.n0n3m4.droidc/usr/bin/sqlite3" ]; then cd $(PREFIX) && tar -zxf $(PWD)/App/sqlite3/usr.tar.gz;fi;
+	if ! [ -f "/mnt/sdcard/C4droid_EXT/lib/libsqlite3.so" ]; then cd /mnt/sdcard && tar -zxf $(PWD)/App/sqlite3/C4droid_EXT.tar.gz;fi;
