@@ -17,8 +17,9 @@ Shell and tools for C4droid
 * libssh2-1.4.3
 * curl-7.37.1
 * git-2.0
+* cmake-3.0.1
 ```
-**~32 Mb in internal memory and ~44 Mb on sdcard for all tools**
+**~42 Mb in internal memory and ~45 Mb on sdcard for all tools**
 
 Installation
 --------------
