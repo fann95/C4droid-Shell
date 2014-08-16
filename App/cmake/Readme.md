@@ -7,7 +7,7 @@ Important
 $ cd /sdcard/project
 $ cmake src
 ```
-**Correct:**('pwd'=/data/data/com.n0n3m4.droidc/home)
+**Correct:**
 ```sh
 $ mkdir mybuild
 $ cd mybuild
