@@ -116,7 +116,7 @@ main(int argc, char **argv)
 		chmod("/data/data/com.n0n3m4.droidc/tmp", S_IRWXU | S_IRWXG | S_IRWXO | S_ISVTX);
 	}
 	struct stat sb;
-	if (stat("/data/data/com.n0n3m4.droidc/files/.C4dENVl", &sb)== -1  || sb.st_size==0) {
+	if (stat("/data/data/com.n0n3m4.droidc/files/.C4dENV", &sb)== -1  || sb.st_size==0) {
 		if(getuid()==0){
 		    printf("Please uncheck 'Run programs as root' in C4droid preferences for first start\n");
 		    exit(0);

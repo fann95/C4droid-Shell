@@ -16,7 +16,7 @@ CONFIGFIX = [ac_cv_host=arm-unknown-linux-androideabi ac_cv_host_alias=arm-linux
 LC_ALL = [en_EN.UTF-8]
 PERL = [/data/data/com.n0n3m4.droidc/usr/bin/perl]
 GIT_SSL_CAINFO = [/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem]
-GIT_CURL_VERBOSE = [1]
+GIT_CURL_VERBOSE = [0]
 CURL_CA_BUNDLE = [/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem]
 SSL_CERT_FILE = [/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem]
 SSL_CERT_DIR = [/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs]
