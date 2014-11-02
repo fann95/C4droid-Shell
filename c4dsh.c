@@ -25,8 +25,8 @@ static char *lskip(const char *s);
 static char* find_char(const char* s, char c);
 int update_config(struct myconfig *config, int *configsize);
 char *promt_line();
-//char *progname;
-//static char syscom[1024];
+ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+static char cur4dir[MAXPATHLEN];
 
 /* When non-zero, this global means the user is done using this program. */
 int done;
@@ -34,12 +34,12 @@ int done;
 
 char *promt_line()
 {
-	static char dir[MAXPATHLEN];
+	//static char dir[MAXPATHLEN];
 	static char buf[MAXPATHLEN];
 	static char tom[15];
 	char *p, *prompt;
 	prompt = (getuid()? " $ " : " # ");
-	char *path = getcwd(dir, MAXPATHLEN);	
+	char *path = getcwd(cur4dir, MAXPATHLEN);	
 	p = strstr(path, getenv("HOME"));
 	if (p) {
 		sprintf(buf, "\001\e[1;33m\002~%s%s\001\e[00m\002", p + strlen(getenv("HOME")), prompt);
@@ -163,7 +163,7 @@ main(int argc, char **argv)
 		config.name[17] = "GIT_SSL_CAINFO";
 		config.value[17] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
 		config.name[18] = "GIT_CURL_VERBOSE";
-		config.value[18] = "1";
+		config.value[18] = "0";
 		config.name[19] = "CURL_CA_BUNDLE";
 		config.value[19] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
 		config.name[20] = "SSL_CERT_FILE";
@@ -230,7 +230,7 @@ char *line;
 	char *wordplus;
 	char *origline=dupstr(line);
 	static char syscom[1024];
-
+	
 	i = 0;
 	while (line[i] && whitespace(line[i]))
 		i++;
@@ -251,7 +251,7 @@ char *line;
 	
 	if (*word) {
 		char *command;
-		command=basename(word);
+		command=(char *)basename(word);		
 		/*configure*/
 		if(strcmp(command,"configure")==0){
 			if((strcmp(wordplus,"--help")!=0 && strcmp(wordplus,"-h")!=0 ) && (strcmp(wordplus,"-help")!=0 && strcmp(wordplus,"?")!=0)){
@@ -295,14 +295,71 @@ char *line;
 			return 0;
 		/*not special command*/
 		}else{
-                    /*for awhile.need fix*/
-		    sprintf(syscom,"%s",origline);
-                    if(system(syscom)!=0)
-                    {
-                        sprintf(syscom,"%s %s",getenv("SHELL"),origline);
-                        system(syscom);
-                     }
-                    return 0;	
+		    struct stat sb;
+			static char buf[MAXPATHLEN];
+			sprintf(buf,"%s/%s",cur4dir,command);
+			/* search full path */
+			if(stat(buf,&sb)==-1){
+				if(stat(word,&sb)!=-1)
+				{
+					sprintf(buf,"%s",word);
+				}else{
+					char *start,*end,*line;
+					line=dupstr(getenv("PATH"));
+					start=line;			    
+			        while(*start)
+			        {
+					    end=find_char(start,':');
+					    if (*end == ':'){*end = '\0';}
+					    sprintf(buf,"%s/%s",start,command);
+					    if (stat(buf, &sb)!= -1){break;}
+					    sprintf(buf,"");
+					    start = lskip(end + 1);
+			        }
+			        free(line);
+			    }
+		    }
+			/*if path to file*/
+			if(strlen(buf)>4){				
+				FILE *file = fopen(buf, "r");
+				if (!file) {
+					printf("ERROR:open file %s\n",buf);
+					return;
+				}
+				char *sc=(char*)malloc(4);
+				if(!sc)
+				{
+					printf("ERROR:allocate memmory for sc\n");
+					fclose(file);
+					return;
+				}
+				/*if script*/
+				if(fgets(sc, 3, file) && strstr(sc,"#!")){					
+					char * scrbuf = NULL;
+					size_t scrbuf_size = 0;
+					getline( & scrbuf , & scrbuf_size , file);
+					/*if /bin/sh */
+					if(strstr((const char *)basename(scrbuf),"sh") && scrbuf_size<15){
+						sprintf(syscom,"%s %s %s",getenv("SHELL"),buf,wordplus);
+						fclose(file);
+						free(sc);
+						free(scrbuf);
+						system(syscom);
+						return 0;
+					}
+					free(scrbuf);
+				}
+				/*not sh script*/				
+				sprintf(syscom,"%s %s",buf,wordplus);
+				fclose(file);
+				free(sc);
+				system(syscom);
+				return 0;
+			}
+			/*command,not file*/
+			sprintf(syscom,"%s",origline);
+			system(syscom);
+			return 0;
 		}
 		return 0;
 	}
@@ -315,7 +372,7 @@ char *s;
 {
 	char *r;
 
-	r = xmalloc(strlen(s) + 1);
+	r =(char*) xmalloc(strlen(s) + 1);
 	strcpy(r, s);
 	return (r);
 }
@@ -425,14 +482,17 @@ int update_config(struct myconfig *config, int *configsize)
 	    }
 		if(error){
 			fclose(file);
+			free(line);
 			return -3;
 		}
 		*configsize=count;		
 		if(*configsize==0) {
 			fclose(file);
+			free(line);
 			printf("ERROR:parse config emty or broken\n");
 			return -3;
 		}
+		free(line);
 		mode=1;
 	}
 	
@@ -448,7 +508,7 @@ int update_config(struct myconfig *config, int *configsize)
 			printf("ERROR:set environment from line %i \n",i);
 			error=-5;
 		}
-}
+    }
     fclose(file);
 	return error;
 }
@@ -470,4 +530,27 @@ char *string;
 	*++t = '\0';
 
 	return s;
+}
+
+ssize_t getline(char **lineptr, size_t *n, FILE *stream)
+{
+    char *ptr;
+    ptr = fgetln(stream, n);
+    if (ptr == NULL) {
+        return -1;
+    }
+    /* Free the original ptr */
+    if (*lineptr != NULL) free(*lineptr);
+    /* Add one more space for '\0' */
+    size_t len = n[0] + 1;
+    /* Update the length */
+    n[0] = len;
+    /* Allocate a new buffer */
+    *lineptr = malloc(len);
+    /* Copy over the string */
+    memcpy(*lineptr, ptr, len-1);
+    /* Write the NULL character */
+    (*lineptr)[len-1] = '\0';
+    /* Return the length of the new buffer */
+    return len;
 }
