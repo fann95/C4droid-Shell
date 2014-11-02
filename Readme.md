@@ -27,7 +27,7 @@ Installation
 1.  Open Makefile in C4droid and compile.
 2.  Add **(c4droid:DATADIR)c4dsh**  in *Menu->Preferences->Shell path*
 3.  Remove all in *Menu->Preferences->Autorun command* and add **clear**
-3.  Check *Menu->Enable Run Terminal button*
+4.  Check *Menu->Enable Run Terminal button*
 
 *it is now possible run terminal from menu*
 
