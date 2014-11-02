@@ -34,7 +34,6 @@ int done;
 
 char *promt_line()
 {
-	//static char dir[MAXPATHLEN];
 	static char buf[MAXPATHLEN];
 	static char tom[15];
 	char *p, *prompt;
@@ -299,8 +298,8 @@ char *line;
 			static char buf[MAXPATHLEN];
 			sprintf(buf,"%s/%s",cur4dir,command);
 			/* search full path */
-			if(stat(buf,&sb)==-1){
-				if(stat(word,&sb)!=-1)
+			if(stat(buf,&sb)==-1 || S_ISDIR(sb.st_mode)){
+				if(stat(word,&sb)!=-1 && !S_ISDIR(sb.st_mode))
 				{
 					sprintf(buf,"%s",word);
 				}else{
@@ -312,7 +311,7 @@ char *line;
 					    end=find_char(start,':');
 					    if (*end == ':'){*end = '\0';}
 					    sprintf(buf,"%s/%s",start,command);
-					    if (stat(buf, &sb)!= -1){break;}
+					    if (stat(buf, &sb)!= -1 && !S_ISDIR(sb.st_mode)){break;}
 					    sprintf(buf,"");
 					    start = lskip(end + 1);
 			        }
