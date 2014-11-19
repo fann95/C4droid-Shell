@@ -26,6 +26,7 @@ static char* find_char(const char* s, char c);
 int update_config(struct myconfig *config, int *configsize);
 char *promt_line();
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+char *replace(char *instring,char *old,char *new);
 static char cur4dir[MAXPATHLEN];
 
 /* When non-zero, this global means the user is done using this program. */
@@ -227,6 +228,8 @@ char *line;
 	register int i;	
 	char *word;
 	char *wordplus;
+	line=replace(line,"~",getenv("HOME"));
+	if(!line){done =1;return 0;}
 	char *origline=dupstr(line);
 	static char syscom[1024];
 	
@@ -246,6 +249,8 @@ char *line;
 		i++;
 	}
 	wordplus = line + i;
+	
+	
 	if(!wordplus || !*wordplus){wordplus="";}
 	
 	if (*word) {
@@ -269,7 +274,8 @@ char *line;
                         return 0;	
 		/*cd*/
 		}else if(strcmp(command,"cd")==0){
-		    if (*wordplus=='~' || wordplus==""){
+			
+		    if (wordplus==""){
 		        if(chdir(getenv("HOME"))==-1){
 			    perror(getenv("HOME"));
 			    return 1;
@@ -552,4 +558,39 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream)
     (*lineptr)[len-1] = '\0';
     /* Return the length of the new buffer */
     return len;
+}
+
+char *replace(char *instring,char *old,char *new)
+{
+	size_t instring_size=strlen(instring);
+	size_t new_size=strlen(new);
+	size_t old_size=strlen(old);
+	
+	if(instring_size<old_size)
+	{
+		printf("ERROR:argument 2 is too much for replace()\n");
+	    return (char*)NULL;
+	}
+	char *test=(char*)malloc(instring_size+1);
+	char *outstring=(char*)malloc(instring_size+new_size-old_size+1);
+		
+	if(!outstring || !test){
+		printf("ERROR:allocate memmory for replace()\n");
+	    return (char*)NULL;
+	}
+	outstring[0]='\0';
+	int i;
+	for(i=0; i <= instring_size; i++)
+	{		
+		strcpy(test,(instring+i));
+		test[old_size]='\0';
+		if(*test==*old){
+			strcat(outstring,new);
+			i=i+old_size-1;
+		}else{
+			test[1]='\0';
+			strcat(outstring,test);
+		}
+	}
+	return outstring;
 }
