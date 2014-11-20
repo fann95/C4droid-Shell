@@ -229,7 +229,7 @@ char *line;
 	char *word;
 	char *wordplus;
 	line=replace(line,"~",getenv("HOME"));
-	if(!line){done =1;return 0;}
+	if(!line){return 0;}
 	char *origline=dupstr(line);
 	static char syscom[1024];
 	
