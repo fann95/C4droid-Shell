@@ -571,7 +571,7 @@ char *replace(char *instring,char *old,char *new)
 		printf("ERROR:argument 2 is too much for replace()\n");
 	    return (char*)NULL;
 	}
-	char *test=(char*)malloc(instring_size+1);
+	char *test=(char*)malloc(old_size+1);
 	char *outstring=(char*)malloc(instring_size+new_size-old_size+1);
 		
 	if(!outstring || !test){
@@ -582,7 +582,7 @@ char *replace(char *instring,char *old,char *new)
 	int i;
 	for(i=0; i <= instring_size; i++)
 	{		
-		strcpy(test,(instring+i));
+		strncpy(test,(instring+i),old_size);
 		test[old_size]='\0';
 		if(*test==*old){
 			strcat(outstring,new);
