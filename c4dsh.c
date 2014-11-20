@@ -36,18 +36,14 @@ int done;
 char *promt_line()
 {
 	static char buf[MAXPATHLEN];
-	static char tom[15];
+	//static char tom[15];
+	char *tom=(char*) xmalloc(15);
 	char *p, *prompt;
 	prompt = (getuid()? " $ " : " # ");
-	char *path = getcwd(cur4dir, MAXPATHLEN);	
-	p = strstr(path, getenv("HOME"));
-	if (p) {
-		sprintf(buf, "\001\e[1;33m\002~%s%s\001\e[00m\002", p + strlen(getenv("HOME")), prompt);
-	buf[sizeof(buf) - 1] = '\0';
-	return buf;
-	}	
-	
+	//char *path = getcwd(cur4dir, MAXPATHLEN);
+	char *path=replace(getcwd(cur4dir, MAXPATHLEN),getenv("HOME"),"~");
 	int n=0;
+	tom[0]='\0';
 	while(1)
 	{
 		if(!(p=strchr(path+1,'/')))
@@ -56,27 +52,29 @@ char *promt_line()
 		}
 		if(n==0)
 		{
+			if((p-path)>14){break;}
 			strncpy(tom,path,(p-path));
+			tom[(p-path)]='\0';
 		}
 		path=p;
 		n++;
-	}
+	}	
 	if(n<=1){
 		sprintf(buf, "\001\e[1;33m\002%s%s%s\001\e[00m\002", tom,path, prompt);
 	}else{
-		char dot[(n-1)*4];
-		memset(dot,'.',sizeof(dot));	
+		size_t dot_len=(n-1)*4-1;
+		char dot[dot_len+1];
+		memset(dot,'.',dot_len);
+		dot[dot_len] = '\0';
 		int i;
-		for(i=0;i<strlen(dot);i++)
+		for(i=0;i<dot_len;i++)
 		{
 			dot[i]=((i&3) ? '.' : '/');
-		}
-		dot[sizeof(dot) - 1] = '\0';
+		}		
 		sprintf(buf, "\001\e[1;33m\002%s%s%s%s\001\e[00m\002", tom,dot,path, prompt);
 	}
 	buf[sizeof(buf) - 1] = '\0';
-	return buf;
-	
+	return buf;	
 }
 
 void sigint_init()
@@ -565,15 +563,20 @@ char *replace(char *instring,char *old,char *new)
 	size_t instring_size=strlen(instring);
 	size_t new_size=strlen(new);
 	size_t old_size=strlen(old);
-	
+	char *outstring;
+	char *test;
 	if(instring_size<old_size)
 	{
-		printf("ERROR:argument 2 is too much for replace()\n");
-	    return (char*)NULL;
+		outstring =(char*) malloc(instring_size + 1);
+		if(!outstring){
+			printf("ERROR:allocate memmory for replace()\n");
+			return (char*)NULL;
+	   }
+	   strcpy(outstring, instring);
+	   return outstring;
 	}
-	char *test=(char*)malloc(old_size+1);
-	char *outstring=(char*)malloc(instring_size+new_size-old_size+1);
-		
+	test=(char*)malloc(old_size+1);
+	outstring=(char*)malloc(instring_size+new_size-old_size+1);		
 	if(!outstring || !test){
 		printf("ERROR:allocate memmory for replace()\n");
 	    return (char*)NULL;
@@ -584,7 +587,7 @@ char *replace(char *instring,char *old,char *new)
 	{		
 		strncpy(test,(instring+i),old_size);
 		test[old_size]='\0';
-		if(*test==*old){
+		if(strcmp(test,old)==0){
 			strcat(outstring,new);
 			i=i+old_size-1;
 		}else{
