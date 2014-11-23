@@ -36,11 +36,9 @@ int done;
 char *promt_line()
 {
 	static char buf[MAXPATHLEN];
-	//static char tom[15];
 	char *tom=(char*) xmalloc(15);
 	char *p, *prompt;
 	prompt = (getuid()? " $ " : " # ");
-	//char *path = getcwd(cur4dir, MAXPATHLEN);
 	char *path=replace(getcwd(cur4dir, MAXPATHLEN),getenv("HOME"),"~");
 	int n=0;
 	tom[0]='\0';
@@ -98,6 +96,8 @@ main(int argc, char **argv)
 	struct myconfig config;
 	int configsize;
 	configsize = 0;
+	//chmod("/data/data/com.n0n3m4.droidc/files/c4dsh", S_ISUID | S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+	
 	if (access("/data/data/com.n0n3m4.droidc/home", 0)) {
 		if(getuid()==0){
 		    printf("Please uncheck 'Run programs as root' in C4droid preferences for first start\n");
@@ -290,7 +290,7 @@ char *line;
                         return 0;
 		/*su*/
 		}else if(strcmp(command,"su")==0){
-			printf("Su off/on in C4droid menu->settings->Preferences->Run programs as root checkbox\n");
+			system("su -c c4dsh");						
 			return 0;
 		/*quit*/
 		}else if(strcmp(command,"quit")==0 || strcmp(command,"exit")==0){
@@ -326,10 +326,12 @@ char *line;
 			if(strlen(buf)>4){				
 				FILE *file = fopen(buf, "r");
 				if (!file) {
-					printf("ERROR:open file %s\n",buf);
-					return;
+					sprintf(syscom,"%s %s",buf,wordplus);
+				system(syscom);
+					return 0;
 				}
 				char *sc=(char*)malloc(4);
+				sc[0]='\0';
 				if(!sc)
 				{
 					printf("ERROR:allocate memmory for sc\n");
@@ -595,5 +597,6 @@ char *replace(char *instring,char *old,char *new)
 			strcat(outstring,test);
 		}
 	}
+	free(test);
 	return outstring;
 }
