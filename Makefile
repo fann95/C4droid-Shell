@@ -1,12 +1,12 @@
 iPREFIX   := /data/data/com.n0n3m4.droidc
 sPREFIX   :=/mnt/sdcard/C4droid_EXT
-INCLUDES := -I$(PWD)/include
-LIBS     :=-L$(PWD)/lib -lreadline -lhistory -lncurses
+INCLUDES := -I$(sPREFIX)/include
+LIBS     :=-L$(sPREFIX)/lib -lreadline -lhistory -lncurses
 
-all: c4dsh install install-gdbm install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake
+all: install install-gdbm install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake
 
 	
-c4dsh: c4dsh.o
+c4dsh: install-readline c4dsh.o
 	$(CC) c4dsh.o -o c4dsh $(LIBS)
 
 c4dsh.o: c4dsh.c
@@ -17,6 +17,9 @@ install: c4dsh
 	install -m 0777 c4dsh $(iPREFIX)/files
 	if ! [ -d $(iPREFIX)/home ]; then mkdir -m 0777 $(iPREFIX)/home;fi;
 	rm -f $(iPREFIX)/files/.C4dENV;
+
+install-readline:
+	if ! [ -f $(sPREFIX)/lib/libreadline.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libreadline6.3/C4droid_EXT.tar.gz;fi;
 
 install-gdbm:
 	if ! [ -f $(iPREFIX)/usr/lib/libgdbm.so.4 ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/GDBM/usr.tar.gz;fi;

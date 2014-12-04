@@ -127,7 +127,6 @@ main(int argc, char **argv)
 		config.value[1] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[2] = "CONFIG_SHELL";
 		config.value[2] = "sh";
-		//-Wl,rpath-link=/data/data/com.n0n3m4.droidc/usr/lib
 		config.name[3] = "CFLAGS";
 		config.value[3] = "-Os -s  -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
 		config.name[4] = "CXXFLAGS";
