@@ -96,7 +96,7 @@ main(int argc, char **argv)
 	struct myconfig config;
 	int configsize;
 	configsize = 0;
-	//chmod("/data/data/com.n0n3m4.droidc/files/c4dsh", S_ISUID | S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+	
 	
 	if (access("/data/data/com.n0n3m4.droidc/home", 0)) {
 		if(getuid()==0){
@@ -122,7 +122,7 @@ main(int argc, char **argv)
 	    }
 	    
 		config.name[0]= "PATH";
-		config.value[0] = "/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin:/sbin:/system/bin:/system/xbin:/data/local/bin";
+		config.value[0] = "/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin:/data/data/com.n0n3m4.droidc/usr/bin/script:/sbin:/system/bin:/system/xbin:/data/local/bin";
 		config.name[1] = "SHELL";
 		config.value[1] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[2] = "CONFIG_SHELL";
@@ -227,7 +227,10 @@ char *line;
 	char *word;
 	char *wordplus;
 	line=replace(line,"~",getenv("HOME"));
-	if(!line){return 0;}
+	if(!line){
+		printf("ERROR:allocate memmory for replace()\n");
+		return 0;
+	}
 	char *origline=dupstr(line);
 	static char syscom[1024];
 	
@@ -250,52 +253,64 @@ char *line;
 	
 	
 	if(!wordplus || !*wordplus){wordplus="";}
-	
+	if (strstr(wordplus,"&& ")){
+		printf("WARNING!!:found '&&'\nThe correct execution of multiple commands can not be guaranteed.\n");
+	}
 	if (*word) {
 		char *command;
 		command=(char *)basename(word);		
 		/*configure*/
 		if(strcmp(command,"configure")==0){
-			if((strcmp(wordplus,"--help")!=0 && strcmp(wordplus,"-h")!=0 ) && (strcmp(wordplus,"-help")!=0 && strcmp(wordplus,"?")!=0)){
-			    sprintf(syscom,"%s %s --host=arm-linux-androideabi --build=i686-linux --disable-nls --prefix=%s CFLAGS='%s' CXXFLAGS='%s' LDFLAGS='%s' %s %s CONFIG_SHELL=sh",getenv("SHELL"),word,getenv("PREFIX"),getenv("CFLAGS"),getenv("CXXFLAGS"),getenv("LDFLAGS"),getenv("CONFIGFIX"),wordplus);
+			if((strcmp(wordplus,"--help")!=0 \
+				&& strcmp(wordplus,"-h")!=0 ) \
+				&& (strcmp(wordplus,"-help")!=0 \
+				&& strcmp(wordplus,"?")!=0)){
+			    sprintf(syscom,\
+					"%s %s --host=arm-linux-androideabi --build=i686-linux --disable-nls --prefix=%s CFLAGS='%s' CXXFLAGS='%s' LDFLAGS='%s' %s %s CONFIG_SHELL=sh",\
+					getenv("SHELL"),word,getenv("PREFIX"),getenv("CFLAGS"),\
+					getenv("CXXFLAGS"),getenv("LDFLAGS"),getenv("CONFIGFIX"),wordplus);
 				printf("\001\e[1;33m\002 %s\001\e[00m\002\n",syscom);
 			}else{
 				sprintf(syscom,"%s %s --help",getenv("SHELL"),word);
 			}
-                    system(syscom);
-                    return 0;
+			system(syscom);
+			goto doreturn;
 		/*make*/
 		}else if(strcmp(command,"make")==0){
-			sprintf(syscom,"%s %s CC='%s' CXX='%s' SHELL='%s'",word,wordplus,getenv("CC"),getenv("CXX"),getenv("SHELL"));
+			sprintf(syscom,"%s %s CC='%s' CXX='%s' SHELL='%s'",\
+				word,wordplus,getenv("CC"),getenv("CXX"),getenv("SHELL"));
 			printf("\001\e[1;33m\002 %s\001\e[00m\002\n",syscom);
-                        system(syscom);
-                        return 0;	
+			system(syscom);
+			goto doreturn;
 		/*cd*/
 		}else if(strcmp(command,"cd")==0){
 			
 		    if (wordplus==""){
 		        if(chdir(getenv("HOME"))==-1){
-			    perror(getenv("HOME"));
-			    return 1;
+					perror(getenv("HOME"));
+					goto doreturn;
 		        }
-	            }else if (chdir(wordplus) == -1) {
-		        perror(wordplus);
-		        return 1;
-	            }
-	            return 0;	        
+						
+			}else if (chdir(wordplus) == -1) {
+				perror(wordplus);
+				goto doreturn;
+			}
+			goto doreturn;       
 		/*ls*/
 		}else if(strcmp(command,"ls")==0){
 			sprintf(syscom, "busybox ls %s", wordplus);
-                        system(syscom);
-                        return 0;
+			system(syscom);
+			goto doreturn;
 		/*su*/
 		}else if(strcmp(command,"su")==0){
-			system("su -c c4dsh");						
+			free(line);
+			free(origline);
+			system("su -c c4dsh");
 			return 0;
 		/*quit*/
 		}else if(strcmp(command,"quit")==0 || strcmp(command,"exit")==0){
 			done=1;
-			return 0;
+			goto doreturn;
 		/*not special command*/
 		}else{
 		    struct stat sb;
@@ -307,9 +322,9 @@ char *line;
 				{
 					sprintf(buf,"%s",word);
 				}else{
-					char *start,*end,*line;
-					line=dupstr(getenv("PATH"));
-					start=line;			    
+					char *start,*end,*sline;
+					sline=dupstr(getenv("PATH"));
+					start=sline;			    
 			        while(*start)
 			        {
 					    end=find_char(start,':');
@@ -319,38 +334,40 @@ char *line;
 					    sprintf(buf,"");
 					    start = lskip(end + 1);
 			        }
-			        free(line);
+			        free(sline);
 			    }
 		    }
 			/*if path to file*/
-			if(strlen(buf)>4){				
+			if(strlen(buf)>4)
+			{				
 				FILE *file = fopen(buf, "r");
 				if (!file) {
 					sprintf(syscom,"%s %s",buf,wordplus);
-				system(syscom);
-					return 0;
+				    system(syscom);
+			        goto doreturn;
 				}
-				char *sc=(char*)malloc(4);
-				sc[0]='\0';
+				char *sc=(char*)malloc(4);				
 				if(!sc)
 				{
 					printf("ERROR:allocate memmory for sc\n");
 					fclose(file);
-					return;
+					goto doreturn;
 				}
+				sc[0]='\0';
 				/*if script*/
-				if(fgets(sc, 3, file) && strstr(sc,"#!")){					
+				if(fgets(sc, 3, file) && strstr(sc,"#!"))
+				{					
 					char * scrbuf = NULL;
 					size_t scrbuf_size = 0;
 					getline( & scrbuf , & scrbuf_size , file);
 					/*if /bin/sh */
 					if(strstr((const char *)basename(scrbuf),"sh") && scrbuf_size<15){
-						sprintf(syscom,"%s %s %s",getenv("SHELL"),buf,wordplus);
+						sprintf(syscom,"%s -c %s %s",getenv("SHELL-G"),buf,wordplus);
 						fclose(file);
 						free(sc);
 						free(scrbuf);
 						system(syscom);
-						return 0;
+						goto doreturn;
 					}
 					free(scrbuf);
 				}
@@ -359,16 +376,18 @@ char *line;
 				fclose(file);
 				free(sc);
 				system(syscom);
-				return 0;
+				goto doreturn;
 			}
 			/*command,not file*/
 			sprintf(syscom,"%s",origline);
 			system(syscom);
-			return 0;
+			goto doreturn;
 		}
-		return 0;
+		goto doreturn;
 	}
-	
+doreturn:
+	free(line);
+	free(origline);
 	return 0;
 }
 
@@ -565,24 +584,20 @@ char *replace(char *instring,char *old,char *new)
 	size_t instring_size=strlen(instring);
 	size_t new_size=strlen(new);
 	size_t old_size=strlen(old);
+	size_t outstring_size=instring_size + 1;
 	char *outstring;
 	char *test;
-	if(instring_size<old_size)
-	{
-		outstring =(char*) malloc(instring_size + 1);
-		if(!outstring){
-			printf("ERROR:allocate memmory for replace()\n");
-			return (char*)NULL;
-	   }
-	   strcpy(outstring, instring);
-	   return outstring;
-	}
 	test=(char*)malloc(old_size+1);
-	outstring=(char*)malloc(instring_size+new_size-old_size+1);		
+	outstring =(char*) malloc(outstring_size);
 	if(!outstring || !test){
-		printf("ERROR:allocate memmory for replace()\n");
-	    return (char*)NULL;
+		return (char*)NULL;
 	}
+	if(instring_size<old_size)
+	{		
+	   strcpy(outstring, instring);
+	   free(test);
+	   return outstring;
+	}	
 	outstring[0]='\0';
 	int i;
 	for(i=0; i <= instring_size; i++)
@@ -590,6 +605,15 @@ char *replace(char *instring,char *old,char *new)
 		strncpy(test,(instring+i),old_size);
 		test[old_size]='\0';
 		if(strcmp(test,old)==0){
+			if(new_size!=old_size)
+			{
+				outstring_size=outstring_size+new_size-old_size;
+				outstring=realloc(outstring,outstring_size);
+				if(!outstring){
+					free(test);
+					return (char*)NULL;
+				}
+			}
 			strcat(outstring,new);
 			i=i+old_size-1;
 		}else{

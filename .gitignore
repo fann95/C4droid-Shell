@@ -1,3 +1,4 @@
 *.o
 *~
 c4dsh
+.C4dENV
