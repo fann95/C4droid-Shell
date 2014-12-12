@@ -36,7 +36,7 @@ install-gdbm:
 
 install-perl: install-gdbm
 	if ! [ -f $(iPREFIX)/usr/bin/perl ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Perl5/usr.tar.gz;fi;
-	if ! [ -d $(sPREFIX)/lib/perl ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Perl5/C4droid_EXT.tar.gz;fi;
+	if ! [ -d $(sPREFIX)/lib/perl5 ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Perl5/C4droid_EXT.tar.gz;fi;
 
 install-autotools:
 	if ! [ -f $(iPREFIX)/usr/bin/automake ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Autotools/usr.tar.gz;install -m 0755 $(PWD)/App/Autotools/CONFIGFIX $(iPREFIX)/usr/bin;fi;
