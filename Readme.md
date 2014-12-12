@@ -5,9 +5,12 @@ Shell and tools for C4droid
 **Now available:**
 ```sh
 * c4dsh
-* perl-5.16.0
+* perl-5.20.1
 * autoconf-2.69
 * automake-1.14.1
+* curl-7.37.1
+* git-2.0
+* cmake-3.0.1
 * flex-2.5.39
 * texinfo-5.2
 * bison-3.0.2
@@ -15,11 +18,11 @@ Shell and tools for C4droid
 * openssl-1.0.1c
 * sqlite3-3.8.5
 * libssh2-1.4.3
-* curl-7.37.1
-* git-2.0
-* cmake-3.0.1
+* gdbm-1.11
+* libiconv-1.14
+* libreadline-6.3
 ```
-**~42 Mb in internal memory and ~45 Mb on sdcard for all tools**
+**~40 Mb in internal memory and ~45 Mb on sdcard for all tools**
 
 Installation
 --------------
