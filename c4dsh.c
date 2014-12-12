@@ -1,4 +1,3 @@
-/*bassed on example of the libreadline*/
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -122,7 +121,7 @@ main(int argc, char **argv)
 	    }
 	    
 		config.name[0]= "PATH";
-		config.value[0] = "/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin:/data/data/com.n0n3m4.droidc/usr/bin/script:/sbin:/system/bin:/system/xbin:/data/local/bin";
+		config.value[0] = "/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin:/data/data/com.n0n3m4.droidc/usr/bin/scripts:/sbin:/system/bin:/system/xbin:/data/local/bin";
 		config.name[1] = "SHELL";
 		config.value[1] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[2] = "CONFIG_SHELL";
@@ -130,7 +129,7 @@ main(int argc, char **argv)
 		config.name[3] = "CFLAGS";
 		config.value[3] = "-Os -s  -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
 		config.name[4] = "CXXFLAGS";
-		config.value[4] = "-Os -s  -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
+		config.value[4] = "-Os -s -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
 		config.name[5] = "LDFLAGS";
 		config.value[5] = "-lm -ldl -llog -lz -lncurses -L/sdcard/C4droid_EXT/lib -L/data/data/com.n0n3m4.droidc/usr/lib -Wl,-allow-shlib-undefined";
 		config.name[6]= "PKG_CONFIG_PATH";
@@ -140,7 +139,7 @@ main(int argc, char **argv)
 		config.name[8] = "CXX";
 		config.value[8] = "/data/data/com.n0n3m4.droidc/files/gcc/bin/arm-linux-androideabi-g++";
 		config.name[9] = "LD_LIBRARY_PATH";
-		config.value[9] = "/data/data/com.n0n3m4.droidc/usr/lib:/system/lib:vendor/lib";
+		config.value[9] = "/data/data/com.n0n3m4.droidc/usr/lib:/vendor/lib:/system/lib";
 		config.name[10] = "PREFIX";
 		config.value[10] = "/data/data/com.n0n3m4.droidc/usr";		
 		config.name[11] = "TEMP";
@@ -149,8 +148,8 @@ main(int argc, char **argv)
 		config.value[12] = "/data/data/com.n0n3m4.droidc/tmp";
 		config.name[13] = "TMPDIR";
 		config.value[13] = "/data/data/com.n0n3m4.droidc/tmp";
-		config.name[14] = "CONFIGFIX";
-		config.value[14] = "ac_cv_host=arm-unknown-linux-androideabi ac_cv_host_alias=arm-linux-androideabi ac_cv_func_malloc_0_nonnull=yes ac_cv_func_realloc_0_nonnull=yes ac_cv_func_ttyname=no";
+		config.name[14] = "SHELL-G";
+		config.value[14] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[15] = "LC_ALL";
 		config.value[15] = "en_EN.UTF-8";
 		
@@ -169,9 +168,7 @@ main(int argc, char **argv)
 		config.value[21] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs";
 		config.name[22] = "CMAKE_ROOT";
 		config.value[22] = "/mnt/sdcard/C4droid_EXT";
-		config.name[23] = "SHELL-G";
-		config.value[23] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
-		configsize = 24;
+		configsize = 23;
 		
 	}
 	
@@ -265,9 +262,9 @@ char *line;
 				&& (strcmp(wordplus,"-help")!=0 \
 				&& strcmp(wordplus,"?")!=0)){
 			    sprintf(syscom,\
-					"%s %s --host=arm-linux-androideabi --build=i686-linux --disable-nls --prefix=%s CFLAGS='%s' CXXFLAGS='%s' LDFLAGS='%s' %s %s CONFIG_SHELL=sh",\
-					getenv("SHELL"),word,getenv("PREFIX"),getenv("CFLAGS"),\
-					getenv("CXXFLAGS"),getenv("LDFLAGS"),getenv("CONFIGFIX"),wordplus);
+					"/data/data/com.n0n3m4.droidc/usr/bin/CONFIGFIX %s --host=arm-linux-androideabi --build=i686-linux --disable-nls --prefix=%s CFLAGS='%s' CXXFLAGS='%s' LDFLAGS='%s' %s CONFIG_SHELL=sh",\
+					word,getenv("PREFIX"),getenv("CFLAGS"),\
+					getenv("CXXFLAGS"),getenv("LDFLAGS"),wordplus);
 				printf("\001\e[1;33m\002 %s\001\e[00m\002\n",syscom);
 			}else{
 				sprintf(syscom,"%s %s --help",getenv("SHELL"),word);
