@@ -13,7 +13,7 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.0
+#PakVer.0.9.1
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
 	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr ;rm -rf /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
@@ -65,13 +65,11 @@ install-ssh2: install-ssl
 	if ! [ -f $(sPREFIX)/lib/libssh2.so ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/ssh2/C4droid_EXT.tar.gz;fi;
 
 install-curl: install-ssl install-ssh2
-	if ! [ -f $(iPREFIX)/usr/bin/curl ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Curl/usr.tar.gz;fi;
+	if ! [ -f $(iPREFIX)/usr/bin/curl ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Curl/usr.tar.gz;install -m 0755 $(PWD)/App/Curl/curl-config $(iPREFIX)/usr/bin;fi;
 	if ! [ -f $(sPREFIX)/lib/libcurl.so ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Curl/C4droid_EXT.tar.gz;fi;
 
 install-git: install-ssl install-ssh2 install-curl
-	if ! [ -f $(iPREFIX)/usr/bin/git ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Git-2.0/usr.tar.gz;fi;
-	if ! [ -d $(sPREFIX)/lib/perl/5.16.0/Git ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Git-2.0/C4droid_EXT.tar.gz;fi;
-
+	if ! [ -f $(iPREFIX)/usr/bin/git ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Git-2.2.0/usr.tar.gz;fi;
 install-sqlite3:
 	if ! [ -f $(iPREFIX)/usr/bin/sqlite3 ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/sqlite3/usr.tar.gz;fi;
 	if ! [ -f $(sPREFIX)/lib/libsqlite3.so ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/sqlite3/C4droid_EXT.tar.gz;fi;
