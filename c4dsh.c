@@ -148,8 +148,8 @@ main(int argc, char **argv)
 		config.value[12] = "/data/data/com.n0n3m4.droidc/tmp";
 		config.name[13] = "TMPDIR";
 		config.value[13] = "/data/data/com.n0n3m4.droidc/tmp";
-		config.name[14] = "SHELL-G";
-		config.value[14] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
+		config.name[14] = "CMAKE_ROOT";
+		config.value[14] = "/mnt/sdcard/C4droid_EXT";
 		config.name[15] = "LC_ALL";
 		config.value[15] = "en_EN.UTF-8";
 		
@@ -166,9 +166,7 @@ main(int argc, char **argv)
 		config.value[20] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
 		config.name[21] = "SSL_CERT_DIR";
 		config.value[21] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs";
-		config.name[22] = "CMAKE_ROOT";
-		config.value[22] = "/mnt/sdcard/C4droid_EXT";
-		configsize = 23;
+		configsize = 22;
 		
 	}
 	
