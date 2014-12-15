@@ -9,7 +9,7 @@ Shell and tools for C4droid
 * autoconf-2.69
 * automake-1.14.1
 * curl-7.37.1
-* git-2.0
+* git-2.2.0
 * cmake-3.0.1
 * flex-2.5.39
 * texinfo-5.2
