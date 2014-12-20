@@ -13,7 +13,7 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.1
+#PakVer.0.9.2
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
 	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr ;rm -rf /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
@@ -43,6 +43,7 @@ install-autotools:
 
 install-flex:
 	if ! [ -f $(iPREFIX)/usr/bin/flex ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Flex/usr.tar.gz;fi;
+	if ! [ -f $(sPREFIX)/lib/libfl.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Flex/C4droid_EXT.tar.gz;fi;
 
 install-texinfo:
 	if ! [ -f $(iPREFIX)/usr/bin/makeinfo ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Texinfo5.2/usr.tar.gz;fi;
