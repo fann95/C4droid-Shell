@@ -11,6 +11,7 @@ Shell and tools for C4droid
 * curl-7.37.1
 * git-2.2.0
 * cmake-3.0.1
+* gdb-7.7.1
 * flex-2.5.39
 * texinfo-5.2
 * bison-3.0.2
