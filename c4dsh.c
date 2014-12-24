@@ -575,6 +575,9 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream)
 
 char *replace(char *instring,char *old,char *new)
 {
+	if(!instring || !old || !new){
+		return (char*)NULL;
+	}
 	size_t instring_size=strlen(instring);
 	size_t new_size=strlen(new);
 	size_t old_size=strlen(old);
@@ -586,7 +589,7 @@ char *replace(char *instring,char *old,char *new)
 	if(!outstring || !test){
 		return (char*)NULL;
 	}
-	if(instring_size<old_size)
+	if(instring_size<old_size || old_size==0)
 	{		
 	   strcpy(outstring, instring);
 	   free(test);
