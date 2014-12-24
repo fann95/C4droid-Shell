@@ -356,7 +356,7 @@ char *line;
 					getline( & scrbuf , & scrbuf_size , file);
 					/*if /bin/sh */
 					if(strstr((const char *)basename(scrbuf),"sh") && scrbuf_size<15){
-						sprintf(syscom,"%s -c %s %s",getenv("SHELL-G"),buf,wordplus);
+						sprintf(syscom,"%s %s %s",getenv("SHELL"),buf,wordplus);
 						fclose(file);
 						free(sc);
 						free(scrbuf);
