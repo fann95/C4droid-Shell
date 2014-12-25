@@ -188,7 +188,27 @@ main(int argc, char **argv)
 
 	if(read_history(NULL)!=0){
 		write_history(NULL);
-	}
+	}	
+	register HIST_ENTRY **the_list;
+    register int i;
+    register int j;
+    the_list = history_list ();
+    if (the_list){
+        for (i= 1; the_list[i]; i++){
+	        for (j= i+1; the_list[j]; j++){
+		        if(strcmp(the_list[i]->line,the_list[j]->line)==0){
+		        	
+		        	HIST_ENTRY * entry=remove_history(i);
+		        	free(entry->line);
+		        	free(entry);
+				    i--;
+				    break;
+			    }
+		    }
+        
+	    }
+    }
+    write_history(NULL);	
 	
 	error=1;
 
