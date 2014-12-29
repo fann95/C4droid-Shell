@@ -6,7 +6,7 @@
 #include <readline/history.h>
 #include <signal.h>
 #include <stdlib.h>
-#define MAXCONFNAMELEN 20
+#define MAXCONFNAMELEN 25
 #define MAXCONFVALUELEN 1024
 #define MAXCONFSIZE 40
 
@@ -166,7 +166,16 @@ main(int argc, char **argv)
 		config.value[20] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
 		config.name[21] = "SSL_CERT_DIR";
 		config.value[21] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs";
-		configsize = 22;
+			/*in doio.c PerlProc_execl(exsh,nash,cosh,cmd, (char *)NULL); for exec script with shebang /bin/sh*/
+		
+		config.name[22] = "PERL_EXSH";
+	     config.value[22] = "/data/data/com.n0n3m4.droidc/files/busybox";
+	     config.name[23] = "PERL_NASH";
+	     config.value[23] = "sh";
+	     config.name[24] = "PERL_COSH";
+	     config.value[24] = "-c";
+		configsize = 25;
+		
 		
 	}
 	
