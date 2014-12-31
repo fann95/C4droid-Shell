@@ -33,6 +33,10 @@ Installation
 3.  Remove all in *Menu->Preferences->Autorun command* and add **clear**
 4.  Check *Menu->Enable Run Terminal button*
 
-*it is now possible run terminal from menu*
+*Now you can run the terminal from C4droid menu and use it*
+*to compile native Linux software for Android.*
+
+*P.S. All the libraries and utilities in this project were compiled by*
+*me from official sources.*
 
 [C4droid]:https://play.google.com/store/apps/details?id=com.n0n3m4.droidc

@@ -6,6 +6,8 @@
 #include <readline/history.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <linux/binfmts.h>
+#include <stdbool.h>
 #define MAXCONFNAMELEN 25
 #define MAXCONFVALUELEN 1024
 #define MAXCONFSIZE 40
@@ -15,6 +17,11 @@ struct myconfig {
 	char *value[MAXCONFSIZE];
 };
 
+struct SHEBANG {
+	char path2script[MAXPATHLEN];
+	char shebang[BINPRM_BUF_SIZE];
+	char opt[BINPRM_BUF_SIZE];
+};
 
 /* Forward declarations. */
 char *stripwhite();
@@ -24,7 +31,7 @@ static char *lskip(const char *s);
 static char* find_char(const char* s, char c);
 int update_config(struct myconfig *config, int *configsize);
 char *promt_line();
-ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+int getShebang(char *execname,struct SHEBANG *pTRshebang);
 char *replace(char *instring,char *old,char *new);
 static char cur4dir[MAXPATHLEN];
 
@@ -121,7 +128,7 @@ main(int argc, char **argv)
 	    }
 	    
 		config.name[0]= "PATH";
-		config.value[0] = "/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin:/data/data/com.n0n3m4.droidc/usr/bin/scripts:/sbin:/system/bin:/system/xbin:/data/local/bin";
+		config.value[0] = "/data/data/com.n0n3m4.droidc/usr/bin:/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin/scripts:/sbin:/system/bin:/system/xbin:/data/local/bin";
 		config.name[1] = "SHELL";
 		config.value[1] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[2] = "CONFIG_SHELL";
@@ -166,17 +173,17 @@ main(int argc, char **argv)
 		config.value[20] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs/ca-bundle-cert.pem";
 		config.name[21] = "SSL_CERT_DIR";
 		config.value[21] = "/data/data/com.n0n3m4.droidc/usr/lib/ssl/certs";
-			/*in doio.c PerlProc_execl(exsh,nash,cosh,cmd, (char *)NULL); for exec script with shebang /bin/sh*/
-		
+		/*
+		in doio.c PerlProc_execl(exsh,nash,cosh,cmd, (char *)NULL);
+		for exec script with shebang #!/bin/sh 
+		*/
 		config.name[22] = "PERL_EXSH";
-	     config.value[22] = "/data/data/com.n0n3m4.droidc/files/busybox";
-	     config.name[23] = "PERL_NASH";
-	     config.value[23] = "sh";
-	     config.name[24] = "PERL_COSH";
-	     config.value[24] = "-c";
-		configsize = 25;
-		
-		
+	    config.value[22] = "/data/data/com.n0n3m4.droidc/files/busybox";
+	    config.name[23] = "PERL_NASH";
+	    config.value[23] = "sh";
+	    config.name[24] = "PERL_COSH";
+	    config.value[24] = "-c";
+		configsize = 25;		
 	}
 	
 	error=update_config(&config, &configsize);
@@ -186,22 +193,20 @@ main(int argc, char **argv)
 	
 	setenv("HOME", "/data/data/com.n0n3m4.droidc/home", 1);
 	
-
 	if (chdir("/data/data/com.n0n3m4.droidc/home") == -1) {
 		perror("/data/data/com.n0n3m4.droidc/home");
 	}
-	char *line, *s;
-	
-	
+	char *line, *s;	
+
 	sigint_init();
 
 	if(read_history(NULL)!=0){
 		write_history(NULL);
 	}	
 	register HIST_ENTRY **the_list;
-    register int i;
-    register int j;
-    the_list = history_list ();
+	register int i;
+	register int j;
+	the_list = history_list ();
     if (the_list){
         for (i= 1; the_list[i]; i++){
 	        for (j= i+1; the_list[j]; j++){
@@ -249,6 +254,9 @@ char *line;
 	register int i;	
 	char *word;
 	char *wordplus;
+	char *command;
+	struct SHEBANG *execFile;
+	execFile=(struct SHEBANG*)xmalloc(sizeof(struct SHEBANG));
 	line=replace(line,"~",getenv("HOME"));
 	if(!line){
 		printf("ERROR:allocate memmory for replace()\n");
@@ -280,7 +288,6 @@ char *line;
 		printf("WARNING!!:found '&&'\nThe correct execution of multiple commands can not be guaranteed.\n");
 	}
 	if (*word) {
-		char *command;
 		command=(char *)basename(word);		
 		/*configure*/
 		if(strcmp(command,"configure")==0){
@@ -297,118 +304,66 @@ char *line;
 				sprintf(syscom,"%s %s --help",getenv("SHELL"),word);
 			}
 			system(syscom);
-			goto doreturn;
 		/*make*/
 		}else if(strcmp(command,"make")==0){
 			sprintf(syscom,"%s %s CC='%s' CXX='%s' SHELL='%s'",\
 				word,wordplus,getenv("CC"),getenv("CXX"),getenv("SHELL"));
 			printf("\001\e[1;33m\002 %s\001\e[00m\002\n",syscom);
 			system(syscom);
-			goto doreturn;
 		/*cd*/
-		}else if(strcmp(command,"cd")==0){
-			
+		}else if(strcmp(command,"cd")==0){			
 		    if (wordplus==""){
 		        if(chdir(getenv("HOME"))==-1){
 					perror(getenv("HOME"));
-					goto doreturn;
-		        }
-						
+		        }						
 			}else if (chdir(wordplus) == -1) {
 				perror(wordplus);
-				goto doreturn;
-			}
-			goto doreturn;       
+			}      
 		/*ls*/
 		}else if(strcmp(command,"ls")==0){
 			sprintf(syscom, "busybox ls %s", wordplus);
 			system(syscom);
-			goto doreturn;
+		/*shebang*/
+		}else if(strcmp(command,"shebang")==0){
+			if(wordplus!=""){
+			    if(getShebang(wordplus,execFile)){
+				    printf("\001\e[1;34m\002File:\001\e[00m\002 %s\n\001\e[1;34m\002Shebang:\001\e[00m\002 %s\n",execFile->path2script,execFile->shebang);
+					if(*execFile->opt){
+					    printf("\001\e[1;34m\002Options:\001\e[00m\002 %s\n",execFile->opt);
+					}
+			    }else if(execFile->path2script){
+				    printf("\001\e[1;34m\002File:\001\e[00m\002 %s\n",execFile->path2script);
+			    }
+			}else{
+				printf("usage: shebang <file> \n");
+			}
 		/*su*/
 		}else if(strcmp(command,"su")==0){
 			free(line);
 			free(origline);
+			free(execFile);
 			system("su -c c4dsh");
 			return 0;
 		/*quit*/
 		}else if(strcmp(command,"quit")==0 || strcmp(command,"exit")==0){
 			done=1;
-			goto doreturn;
-		/*not special command*/
+		/*not substituted commands*/
+		/*if script /bin/sh*/
+		}else if(getShebang(word,execFile) && strstr(execFile->shebang,"#!/bin/sh")){
+			sprintf(syscom,"%s %s %s",getenv("SHELL"),execFile->path2script,wordplus);
+			system(syscom);
+		/*if file exist*/
+		}else if(execFile->path2script[0]){
+			sprintf(syscom,"%s %s",execFile->path2script,wordplus);
+			system(syscom);
+		/*try exec*/
 		}else{
-		    struct stat sb;
-			static char buf[MAXPATHLEN];
-			sprintf(buf,"%s/%s",cur4dir,command);
-			/* search full path */
-			if(stat(buf,&sb)==-1 || S_ISDIR(sb.st_mode)){
-				if(stat(word,&sb)!=-1 && !S_ISDIR(sb.st_mode))
-				{
-					sprintf(buf,"%s",word);
-				}else{
-					char *start,*end,*sline;
-					sline=dupstr(getenv("PATH"));
-					start=sline;			    
-			        while(*start)
-			        {
-					    end=find_char(start,':');
-					    if (*end == ':'){*end = '\0';}
-					    sprintf(buf,"%s/%s",start,command);
-					    if (stat(buf, &sb)!= -1 && !S_ISDIR(sb.st_mode)){break;}
-					    sprintf(buf,"");
-					    start = lskip(end + 1);
-			        }
-			        free(sline);
-			    }
-		    }
-			/*if path to file*/
-			if(strlen(buf)>4)
-			{				
-				FILE *file = fopen(buf, "r");
-				if (!file) {
-					sprintf(syscom,"%s %s",buf,wordplus);
-				    system(syscom);
-			        goto doreturn;
-				}
-				char *sc=(char*)malloc(4);				
-				if(!sc)
-				{
-					printf("ERROR:allocate memmory for sc\n");
-					fclose(file);
-					goto doreturn;
-				}
-				sc[0]='\0';
-				/*if script*/
-				if(fgets(sc, 3, file) && strstr(sc,"#!"))
-				{					
-					char * scrbuf = NULL;
-					size_t scrbuf_size = 0;
-					getline( & scrbuf , & scrbuf_size , file);
-					/*if /bin/sh */
-					if(strstr((const char *)basename(scrbuf),"sh") && scrbuf_size<15){
-						sprintf(syscom,"%s %s %s",getenv("SHELL"),buf,wordplus);
-						fclose(file);
-						free(sc);
-						free(scrbuf);
-						system(syscom);
-						goto doreturn;
-					}
-					free(scrbuf);
-				}
-				/*not sh script*/				
-				sprintf(syscom,"%s %s",buf,wordplus);
-				fclose(file);
-				free(sc);
-				system(syscom);
-				goto doreturn;
-			}
-			/*command,not file*/
 			sprintf(syscom,"%s",origline);
 			system(syscom);
-			goto doreturn;
 		}
-		goto doreturn;
+		
 	}
-doreturn:
+	free(execFile);
 	free(line);
 	free(origline);
 	return 0;
@@ -579,28 +534,7 @@ char *string;
 	return s;
 }
 
-ssize_t getline(char **lineptr, size_t *n, FILE *stream)
-{
-    char *ptr;
-    ptr = fgetln(stream, n);
-    if (ptr == NULL) {
-        return -1;
-    }
-    /* Free the original ptr */
-    if (*lineptr != NULL) free(*lineptr);
-    /* Add one more space for '\0' */
-    size_t len = n[0] + 1;
-    /* Update the length */
-    n[0] = len;
-    /* Allocate a new buffer */
-    *lineptr = malloc(len);
-    /* Copy over the string */
-    memcpy(*lineptr, ptr, len-1);
-    /* Write the NULL character */
-    (*lineptr)[len-1] = '\0';
-    /* Return the length of the new buffer */
-    return len;
-}
+
 
 char *replace(char *instring,char *old,char *new)
 {
@@ -649,4 +583,87 @@ char *replace(char *instring,char *old,char *new)
 	}
 	free(test);
 	return outstring;
+}
+
+
+//#include <linux/binfmts.h>
+//#include <sys/param.h>
+int getShebang(char *execname,struct SHEBANG *pTRshebang){
+
+	if(!execname || !pTRshebang){return 0;}
+	/*clean*/
+	memset(pTRshebang,0,sizeof(*pTRshebang));
+    FILE *file;
+	int shebang_len =0;
+	int opt_len =0;
+	bool optexist =false;
+	char ch= '\0';	
+	struct stat sb;
+	sprintf(pTRshebang->path2script,"%s",execname);
+	/*if not full path?*/
+	if(stat(pTRshebang->path2script,&sb)==-1 || S_ISDIR(sb.st_mode)){
+		/*not in curdir?*/
+
+		//static char cur4dir[MAXPATHLEN];
+		//if(getcwd(cur4dir, MAXPATHLEN)!=NULL){
+		if(cur4dir){
+			sprintf(pTRshebang->path2script,"%s/%s",cur4dir,basename(execname));
+		    if(stat(pTRshebang->path2script,&sb)==-1 || S_ISDIR(sb.st_mode)){
+			    /* search in PATH */
+			    char *start,*end,*sline;
+				sline=(char*)malloc(strlen(getenv("PATH")) + 1);
+				if(!sline){return 0;}
+			    strcpy(sline,getenv("PATH"));
+			    start=sline;
+			    while(*start){
+					end=find_char(start,':');
+				    if (*end == ':'){*end = '\0';}
+				    sprintf(pTRshebang->path2script,"%s/%s",start,basename(execname));
+				    if (stat(pTRshebang->path2script, &sb)!= -1 && !S_ISDIR(sb.st_mode)){break;}
+					pTRshebang->path2script[0]='\0';
+				    start = lskip(end + 1);
+			    }
+			    free(sline);				
+		    }
+	    }
+	}else{
+		if(execname[0]!='/'){
+		sprintf(pTRshebang->path2script,"%s/%s",cur4dir,basename(execname));
+		}
+	}
+	if(!pTRshebang->path2script[0] || !(file = fopen(pTRshebang->path2script, "r"))){
+	    return 0;
+	}
+	/*without fgets*/
+	while(shebang_len < 2 && (ch=fgetc(file)) != EOF) {
+        pTRshebang->shebang[shebang_len]=ch;
+		shebang_len++;
+    }
+	/*if script*/
+	if(pTRshebang->shebang && strstr(pTRshebang->shebang,"#!")){
+	    while((ch=fgetc(file)) != EOF && (ch!='\n' && (shebang_len+opt_len)< BINPRM_BUF_SIZE)) {
+		    if(isspace(ch)){
+		        if(shebang_len==2){
+				    continue;
+				}else{
+				    optexist=true;
+				    if(opt_len==0){continue;}
+				}
+			}
+			if(optexist){
+			    pTRshebang->opt[opt_len]=ch;
+				opt_len++;
+			}else{
+                pTRshebang->shebang[shebang_len]=ch;
+                shebang_len++;
+			}		    
+		}
+				
+    }else{
+		fclose(file);
+	    return 0;
+	}
+	fclose(file);	
+	if(ch =='\n'){return 1;}
+    return 0;
 }
