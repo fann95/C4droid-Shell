@@ -2,8 +2,10 @@ iPREFIX   := /data/data/com.n0n3m4.droidc
 sPREFIX   :=/mnt/sdcard/C4droid_EXT
 INCLUDES := -I$(sPREFIX)/include
 LIBS     :=-L$(sPREFIX)/lib -lreadline -lhistory -lncurses
+LD_LIBRARY_PATH =/data/data/com.n0n3m4.droidc/usr/lib:/vendor/lib:/system/lib
 
-all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb
+
+all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb install-openssh
 
 	
 c4dsh: install-readline c4dsh.o
@@ -13,7 +15,7 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.4
+#PakVer.0.9.5
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
 	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr ;rm -rf /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
@@ -81,3 +83,11 @@ install-cmake: install-ssl
 
 install-gdb:
 	if ! [ -f $(iPREFIX)/usr/bin/gdb ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/gdb/usr.tar.gz;fi;
+
+install-openssh:install-ssl
+	if ! [ -f $(iPREFIX)/usr/bin/ssh ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/openssh/usr.tar.gz;fi
+	if ! [ -f $(iPREFIX)/usr/etc/ssh_host_key ] ; then $(iPREFIX)/usr/bin/ssh-keygen -t rsa1 -f $(iPREFIX)/usr/etc/ssh_host_key -N "" ; fi ;
+	if ! [ -f $(iPREFIX)/usr/etc/ssh_host_rsa_key ] ; then $(iPREFIX)/usr/bin/ssh-keygen -t rsa -f $(iPREFIX)/usr/etc/ssh_host_rsa_key -N "" ; fi ;
+	if ! [ -f $(iPREFIX)/usr/etc/ssh_host_dsa_key ] ; then $(iPREFIX)/usr/bin/ssh-keygen -t dsa -f $(iPREFIX)/usr/etc/ssh_host_dsa_key -N "" ; fi ;
+	if ! [ -f $(iPREFIX)/usr/etc/ssh_host_ed25519_key ] ; then $(iPREFIX)/usr/bin/ssh-keygen -t ed25519 -f $(iPREFIX)/usr/etc/ssh_host_ed25519_key -N "" ; fi ;
+	if ! [ -f $(iPREFIX)/usr/etc/ssh_host_ecdsa_key ] ; then $(iPREFIX)/usr/bin/ssh-keygen -t ecdsa -f $(iPREFIX)/usr/etc/ssh_host_ecdsa_key -N "" ; fi ;

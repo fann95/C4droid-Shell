@@ -17,6 +17,7 @@ Shell and tools for C4droid
 * bison-3.0.2
 * help2man-1.43.3
 * openssl-1.0.1c
+* openssh-6.7p1
 * sqlite3-3.8.5
 * libssh2-1.4.3
 * gdbm-1.11
@@ -28,7 +29,7 @@ Shell and tools for C4droid
 Installation
 --------------
 
-1.  Open Makefile in C4droid and compile.
+1.  Open Makefile in [C4droid] and compile.
 2.  Add **(c4droid:DATADIR)c4dsh**  in *Menu->Preferences->Shell path*
 3.  Remove all in *Menu->Preferences->Autorun command* and add **clear**
 4.  Check *Menu->Enable Run Terminal button*

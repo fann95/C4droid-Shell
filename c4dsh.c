@@ -128,7 +128,7 @@ main(int argc, char **argv)
 	    }
 	    
 		config.name[0]= "PATH";
-		config.value[0] = "/data/data/com.n0n3m4.droidc/usr/bin:/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin/scripts:/sbin:/system/bin:/system/xbin:/data/local/bin";
+		config.value[0] = "/data/data/com.n0n3m4.droidc/usr/sbin:/data/data/com.n0n3m4.droidc/usr/bin:/busybox-virtual:/data/data/com.n0n3m4.droidc/files/:/data/data/com.n0n3m4.droidc/files/gcc/bin:/data/data/com.n0n3m4.droidc/files/gcc/qt/bin:/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/bin:/data/data/com.n0n3m4.droidc/usr/bin/scripts:/sbin:/system/bin:/system/xbin:/data/local/bin";
 		config.name[1] = "SHELL";
 		config.value[1] = "/data/data/com.n0n3m4.droidc/files/busybox sh";
 		config.name[2] = "CONFIG_SHELL";
