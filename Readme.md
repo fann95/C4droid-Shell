@@ -27,8 +27,9 @@ Shell and tools for C4droid
 **~40 Mb in internal memory and ~45 Mb on sdcard for all tools**
 
 **Requires:**
-[c4droid](not a free app.,but well that not expensive)
-[GCC plugin] installed in the internal memory
+----------------
+1. *[c4droid] not a free app.,but well that not expensive*
+2. *[GCC plugin] installed in the internal memory*
 
 Installation
 --------------
