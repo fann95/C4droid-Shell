@@ -2,7 +2,7 @@ Shell and tools for C4droid
 ----------------------------
 [C4droid] *is a IDE + C/C++ compiler for Android.*
 
-**Now available:**
+**Now available(only for devices with ARM cpu):**
 ```sh
 * c4dsh
 * perl-5.20.1
@@ -28,8 +28,9 @@ Shell and tools for C4droid
 
 Installation
 --------------
-
-1.  Open Makefile in [C4droid] and compile.
+requires [c4droid](not a free app.,but well that not expensive) and
+[GCC plugin] installed in the internal memory.
+1.  Open Makefile in C4droid and compile.
 2.  Add **(c4droid:DATADIR)c4dsh**  in *Menu->Preferences->Shell path*
 3.  Remove all in *Menu->Preferences->Autorun command* and add **clear**
 4.  Check *Menu->Enable Run Terminal button*
@@ -41,3 +42,4 @@ Installation
 *me from official sources.*
 
 [C4droid]:https://play.google.com/store/apps/details?id=com.n0n3m4.droidc
+[GCC plugin]:https://play.google.com/store/apps/details?id=com.n0n3m4.gcc4droid
