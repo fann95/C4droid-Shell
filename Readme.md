@@ -28,7 +28,7 @@ Shell and tools for C4droid
 
 **Requires:**
 ----------------
-1. *[c4droid] not a free app.,but well that not expensive*
+1. *[C4droid] not a free app.,but well that not expensive*
 2. *[GCC plugin] installed in the internal memory*
 
 Installation
