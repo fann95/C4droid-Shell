@@ -15,7 +15,7 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.5
+#PakVer.0.9.6
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
 	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr ;rm -rf /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
