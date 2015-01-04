@@ -26,10 +26,13 @@ Shell and tools for C4droid
 ```
 **~40 Mb in internal memory and ~45 Mb on sdcard for all tools**
 
+**Requires:**
+[c4droid](not a free app.,but well that not expensive)
+[GCC plugin] installed in the internal memory
+
 Installation
 --------------
-requires [c4droid](not a free app.,but well that not expensive) and
-[GCC plugin] installed in the internal memory.
+
 1.  Open Makefile in C4droid and compile.
 2.  Add **(c4droid:DATADIR)c4dsh**  in *Menu->Preferences->Shell path*
 3.  Remove all in *Menu->Preferences->Autorun command* and add **clear**
