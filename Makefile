@@ -15,15 +15,16 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.6
+#PakVer.0.9.7
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
-	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr ;rm -rf /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
+	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr $(iPREFIX)/tmp /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
 
 install: clean_install c4dsh
 	install -m 0777 c4dsh $(iPREFIX)/files
 	if ! [ -d $(iPREFIX)/home ]; then mkdir -m 0777 $(iPREFIX)/home;fi;
 	rm -f $(iPREFIX)/files/.C4dENV;
+	if  [ -d $(iPREFIX)/etc_bak ]; then mv $(iPREFIX)/etc_bak $(iPREFIX)/usr/etc;fi;
 
 install-iconv:
 	if ! [ -f $(iPREFIX)/usr/lib/libiconv.so.2 ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/libiconv-1.14/usr.tar.gz;fi;
@@ -37,7 +38,7 @@ install-gdbm:
 	if ! [ -f $(sPREFIX)/lib/libgdbm.so ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/GDBM/C4droid_EXT.tar.gz;fi;
 
 install-perl: install-gdbm
-	if ! [ -f $(iPREFIX)/usr/bin/perl ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Perl5/usr.tar.gz;rm -rf $(iPREFIX)/home/.cpan;rm -rf $(iPREFIX)/tmp;fi;
+	if ! [ -f $(iPREFIX)/usr/bin/perl ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/Perl5/usr.tar.gz;rm -rf $(iPREFIX)/home/.cpan;fi;
 	if ! [ -d $(sPREFIX)/lib/perl5 ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Perl5/C4droid_EXT.tar.gz;cp $(PWD)/App/Perl5/arm-linux-androideabi-thread-multi/Config_heavy.pl $(sPREFIX)/lib/perl5/5.20.1/arm-linux-androideabi-thread-multi/Config_heavy.pl;cp $(PWD)/App/Perl5/CPAN/Config.pm $(sPREFIX)/lib/perl5/5.20.1/CPAN/Config.pm;fi;
 
 install-autotools:
