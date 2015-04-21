@@ -30,7 +30,7 @@ Shell and tools for C4droid
 * libpcre-8.33
 * libzlib-1.2.3
 ```
-**~40 Mb in internal memory and ~45 Mb on sdcard for all tools**
+**~40 Mb in internal memory and ~55 Mb on sdcard for all tools**
 
 **Requires:**
 ----------------
