@@ -23,6 +23,12 @@ Shell and tools for C4droid
 * gdbm-1.11
 * libiconv-1.14
 * libreadline-6.3
+* libexpat-2.1.0
+* libssh-0.7.0
+* libxml2-2.7.8
+* libpcap-2.4
+* libpcre-8.33
+* libzlib-1.2.3
 ```
 **~40 Mb in internal memory and ~45 Mb on sdcard for all tools**
 
