@@ -5,7 +5,7 @@ LIBS     :=-L$(sPREFIX)/lib -lreadline -lhistory -lncurses
 LD_LIBRARY_PATH =/data/data/com.n0n3m4.droidc/usr/lib:/vendor/lib:/system/lib
 
 
-all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb install-openssh
+all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb install-xml2 install-expat install-pcre install-pcap install-zlib install-ssh install-openssh
 
 	
 c4dsh: install-readline c4dsh.o
@@ -15,7 +15,7 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.7
+#PakVer.0.9.8
 #This target checks:if the Makefile has chenged ->so remove all before installation
 clean_install:
 	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr $(iPREFIX)/tmp /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
@@ -32,6 +32,24 @@ install-iconv:
 
 install-readline:
 	if ! [ -f $(sPREFIX)/lib/libreadline.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libreadline6.3/C4droid_EXT.tar.gz;fi;
+
+install-xml2:
+	if ! [ -f $(sPREFIX)/lib/libxml2.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/Xml2/C4droid_EXT.tar.gz;fi;
+
+install-expat:
+	if ! [ -f $(sPREFIX)/lib/libexpat.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libexpat/C4droid_EXT.tar.gz;fi;
+
+install-pcre:
+	if ! [ -f $(sPREFIX)/lib/libpcre.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libpcre/C4droid_EXT.tar.gz;fi;
+
+install-zlib:
+	if ! [ -f $(sPREFIX)/lib/libzlib.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libzlib/C4droid_EXT.tar.gz;fi;
+
+install-ssh:
+	if ! [ -f $(iPREFIX)/usr/lib/libssh.so ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/libssh/usr.tar.gz;cd /mnt/sdcard && tar -mzxf $(PWD)/App/libssh/C4droid_EXT.tar.gz;fi;
+
+install-pcap:
+	if ! [ -f $(sPREFIX)/lib/libpcap.a ]; then cd /mnt/sdcard && tar -mzxf $(PWD)/App/libpcap/C4droid_EXT.tar.gz;fi;
 
 install-gdbm:
 	if ! [ -f $(iPREFIX)/usr/lib/libgdbm.so.4 ]; then cd $(iPREFIX) && tar -mzxf $(PWD)/App/GDBM/usr.tar.gz;fi;
