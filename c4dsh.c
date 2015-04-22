@@ -455,7 +455,6 @@ int update_config(struct myconfig *config, int *configsize)
 						    *end = '\0';
 							start = lskip(start + 1);
 						    config->value[count]=dupstr(rstrip(start));
-						    //printf("%s\n",rstrip(start));
 						    
 					    } else {
 							printf("ERROR:']' not found in line: %i (config broken)\n",count);
@@ -589,7 +588,6 @@ char *replace(char *instring,char *old,char *new)
 //#include <linux/binfmts.h>
 //#include <sys/param.h>
 int getShebang(char *execname,struct SHEBANG *pTRshebang){
-
 	if(!execname || !pTRshebang){return 0;}
 	/*clean*/
 	memset(pTRshebang,0,sizeof(*pTRshebang));
@@ -599,47 +597,33 @@ int getShebang(char *execname,struct SHEBANG *pTRshebang){
 	bool optexist =false;
 	char ch= '\0';	
 	struct stat sb;
-	sprintf(pTRshebang->path2script,"%s",execname);
-	/*if not full path?*/
-	if(stat(pTRshebang->path2script,&sb)==-1 || S_ISDIR(sb.st_mode)){
-		/*not in curdir?*/
-
-		//static char cur4dir[MAXPATHLEN];
-		//if(getcwd(cur4dir, MAXPATHLEN)!=NULL){
-		if(cur4dir){
-			sprintf(pTRshebang->path2script,"%s/%s",cur4dir,basename(execname));
-		    if(stat(pTRshebang->path2script,&sb)==-1 || S_ISDIR(sb.st_mode)){
-			    /* search in PATH */
-			    char *start,*end,*sline;
-				sline=(char*)malloc(strlen(getenv("PATH")) + 1);
-				if(!sline){return 0;}
-			    strcpy(sline,getenv("PATH"));
-			    start=sline;
-			    while(*start){
-					end=find_char(start,':');
-				    if (*end == ':'){*end = '\0';}
-				    sprintf(pTRshebang->path2script,"%s/%s",start,basename(execname));
-				    if (stat(pTRshebang->path2script, &sb)!= -1 && !S_ISDIR(sb.st_mode)){break;}
-					pTRshebang->path2script[0]='\0';
-				    start = lskip(end + 1);
-			    }
-			    free(sline);				
-		    }
-	    }
-	}else{
-		if(execname[0]!='/'){
-		sprintf(pTRshebang->path2script,"%s/%s",cur4dir,basename(execname));
+	
+	if ((realpath(execname, pTRshebang->path2script) == 0) || (stat(pTRshebang->path2script,&sb)==-1 || S_ISDIR(sb.st_mode))){	
+		/* search in PATH */
+	    char *start,*end,*sline;
+		sline=(char*)malloc(strlen(getenv("PATH")) + 1);
+	    if(!sline){return 0;}
+		strcpy(sline,getenv("PATH"));
+		start=sline;
+		while(*start){
+			end=find_char(start,':');
+			if (*end == ':'){*end = '\0';}
+			sprintf(pTRshebang->path2script,"%s/%s",start,basename(execname));
+			if (stat(pTRshebang->path2script, &sb)!= -1 && !S_ISDIR(sb.st_mode)){break;}
+			pTRshebang->path2script[0]='\0';
+			start = lskip(end + 1);
 		}
+		free(sline);	    
 	}
 	if(!pTRshebang->path2script[0] || !(file = fopen(pTRshebang->path2script, "r"))){
 	    return 0;
 	}
-	/*without fgets*/
+	/*check #!*/
 	while(shebang_len < 2 && (ch=fgetc(file)) != EOF) {
         pTRshebang->shebang[shebang_len]=ch;
 		shebang_len++;
     }
-	/*if script*/
+	/*if shebang*/
 	if(pTRshebang->shebang && strstr(pTRshebang->shebang,"#!")){
 	    while((ch=fgetc(file)) != EOF && (ch!='\n' && (shebang_len+opt_len)< BINPRM_BUF_SIZE)) {
 		    if(isspace(ch)){
