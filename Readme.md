@@ -36,6 +36,7 @@ Shell and tools for C4droid
 ----------------
 1. *[C4droid] not a free app.,but well that not expensive*
 2. *[GCC plugin] installed in the internal memory*
+3. *[Busybox]*
 
 Installation
 --------------
@@ -78,3 +79,4 @@ $CC $CFLAGS -I/path_to_additional_headers -o example example.c ${LDFLAGS} -L/pat
 
 [C4droid]:https://play.google.com/store/apps/details?id=com.n0n3m4.droidc
 [GCC plugin]:https://play.google.com/store/apps/details?id=com.n0n3m4.gcc4droid
+[Busybox]:https://play.google.com/store/apps/details?id=stericson.busybox
