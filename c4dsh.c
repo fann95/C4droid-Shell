@@ -354,7 +354,7 @@ char *line;
 			done=1;
 		/*not substituted commands*/
 		/*if script /bin/sh*/
-		}else if(getShebang(word,execFile) && strstr(execFile->shebang,"#!/bin/sh")){
+		}else if(getShebang(word,execFile) && (strstr(execFile->shebang,"#!/bin/sh") || strstr(execFile->shebang,"#!sh"))){
 			sprintf(syscom,"%s %s %s",getenv("SHELL"),execFile->path2script,wordplus);
 			system(syscom);
 		/*if file exist*/
