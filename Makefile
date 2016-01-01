@@ -4,9 +4,12 @@ INCLUDES := -I$(sPREFIX)/include
 LIBS     :=-L$(sPREFIX)/lib -lreadline -lhistory -lncurses
 LD_LIBRARY_PATH =/data/data/com.n0n3m4.droidc/usr/lib:/vendor/lib:/system/lib
 TAR      :=/system/xbin/tar
+INSTALL :=/system/xbin/install
+RM :=/system/xbin/rm
+TOUCH :=/system/xbin/touch
 
 
-all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb install-xml2 install-expat install-pcre install-pcap install-zlib install-ssh install-openssh
+all: install install-gdbm install-iconv install-perl install-autotools install-flex install-texinfo install-help2man install-bison install-ssl install-ssh2 install-curl install-git install-sqlite3 install-cmake install-gdb install-xml2 install-expat install-pcre install-pcap install-zlib install-libtool  install-ssh install-openssh
 
 	
 c4dsh: install-readline c4dsh.o
@@ -16,20 +19,24 @@ c4dsh.o: c4dsh.c
 	$(CC) $(INCLUDES) -c c4dsh.c -o c4dsh.o    
 
 #use md5sum(busybox)
-#PakVer.0.9.8
-#This target checks:if the Makefile has chenged ->so remove all before installation
+#PakVer.0.9.9
+#This target checks:if the Makefile has chenged ->so remove all before installation.
 clean_install:
-	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then rm -rf ${iPREFIX}/usr $(iPREFIX)/tmp /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec rm -r {} \; && touch ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
+	if ! [ -f ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install ];then $(RM) -rf ${iPREFIX}/usr $(iPREFIX)/tmp /mnt/sdcard/C4droid_EXT;find ${iPREFIX} -maxdepth 1 -type f -name *.install -exec $(RM) -f {} \; && $(TOUCH) ${iPREFIX}/`md5sum $(PWD)/Makefile | cut -d' ' -f1`.install;fi;
 
 install: clean_install c4dsh
-	install -m 0777 c4dsh $(iPREFIX)/files
+	$(INSTALL) -m 0777 c4dsh $(iPREFIX)/files
 	if ! [ -d $(iPREFIX)/home ]; then mkdir -m 0777 $(iPREFIX)/home;fi;
-	rm -f $(iPREFIX)/files/.C4dENV;
+	$(RM) -f $(iPREFIX)/files/.C4dENV;
 	if  [ -d $(iPREFIX)/etc_bak ]; then mv $(iPREFIX)/etc_bak $(iPREFIX)/usr/etc;fi;
 
 install-iconv:
 	if ! [ -f $(iPREFIX)/usr/lib/libiconv.so.2 ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/libiconv-1.14/usr.tar.gz;fi;
 	if ! [ -f $(sPREFIX)/lib/libiconv.so ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/libiconv-1.14/C4droid_EXT.tar.gz;fi;
+
+install-libtool:
+	if ! [ -f $(iPREFIX)/usr/bin/libtool ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/libtool/usr.tar.gz;fi;
+	if ! [ -f $(sPREFIX)/include/ltdl.h ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/libtool/C4droid_EXT.tar.gz;fi;
 
 install-readline:
 	if ! [ -f $(sPREFIX)/lib/libreadline.a ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/libreadline6.3/C4droid_EXT.tar.gz;fi;
@@ -57,11 +64,11 @@ install-gdbm:
 	if ! [ -f $(sPREFIX)/lib/libgdbm.so ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/GDBM/C4droid_EXT.tar.gz;fi;
 
 install-perl: install-gdbm
-	if ! [ -f $(iPREFIX)/usr/bin/perl ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/Perl5/usr.tar.gz;rm -rf $(iPREFIX)/home/.cpan;fi;
+	if ! [ -f $(iPREFIX)/usr/bin/perl ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/Perl5/usr.tar.gz;$(RM) -rf $(iPREFIX)/home/.cpan;fi;
 	if ! [ -d $(sPREFIX)/lib/perl5 ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/Perl5/C4droid_EXT.tar.gz;cp $(PWD)/App/Perl5/arm-linux-androideabi-thread-multi/Config_heavy.pl $(sPREFIX)/lib/perl5/5.20.1/arm-linux-androideabi-thread-multi/Config_heavy.pl;cp $(PWD)/App/Perl5/CPAN/Config.pm $(sPREFIX)/lib/perl5/5.20.1/CPAN/Config.pm;fi;
 
 install-autotools:
-	if ! [ -f $(iPREFIX)/usr/bin/automake ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/Autotools/usr.tar.gz;install -m 0755 $(PWD)/App/Autotools/CONFIGFIX $(iPREFIX)/usr/bin;fi;
+	if ! [ -f $(iPREFIX)/usr/bin/automake ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/Autotools/usr.tar.gz;$(INSTALL) -m 0755 $(PWD)/App/Autotools/CONFIGFIX $(iPREFIX)/usr/bin;fi;
 
 install-flex:
 	if ! [ -f $(iPREFIX)/usr/bin/flex ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/Flex/usr.tar.gz;fi;

@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <linux/binfmts.h>
 #include <stdbool.h>
+#include <libgen.h>
 #define MAXCONFNAMELEN 25
 #define MAXCONFVALUELEN 1024
 #define MAXCONFSIZE 40
-
+int execute_line(char *line);
+void *xmalloc(size_t size);
 struct myconfig {
 	char *name[MAXCONFSIZE];
 	char *value[MAXCONFSIZE];
@@ -90,7 +92,7 @@ void sigint_init()
 	return;
 }
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	
 	if (access("/data/data/com.n0n3m4.droidc/files/gcc", 0)) {
@@ -183,7 +185,10 @@ main(int argc, char **argv)
 	    config.value[23] = "sh";
 	    config.name[24] = "PERL_COSH";
 	    config.value[24] = "-c";
-		configsize = 25;		
+	    config.name[25] = "M4PATH";
+	    config.value[25] = "/data/data/com.n0n3m4.droidc/usr/share/autoconf";	 		config.name[26]= "PKG_CONFIG";
+		config.value[26] = "/data/data/com.n0n3m4.droidc/files/gcc/bin/pkg-config";
+		configsize = 27;		
 	}
 	
 	error=update_config(&config, &configsize);
