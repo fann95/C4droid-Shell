@@ -7,7 +7,7 @@ Shell and tools for C4droid
 * c4dsh
 * perl-5.20.1
 * autoconf-2.69
-* automake-1.9.6
+* automake-1.15
 * libtool-2.4
 * curl-7.37.1
 * git-2.2.0
