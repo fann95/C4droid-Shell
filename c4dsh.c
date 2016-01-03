@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 		config.name[5] = "LDFLAGS";
 		config.value[5] = "-lm -ldl -llog -lz -lncurses -L/sdcard/C4droid_EXT/lib -L/data/data/com.n0n3m4.droidc/usr/lib -Wl,-allow-shlib-undefined";
 		config.name[6]= "PKG_CONFIG_PATH";
-		config.value[6] = "/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/lib/pkgconfig:/sdcard/C4droid_EXT/lib/pkgconfig;/data/data/com.n0n3m4.droidc/usr/lib/pkgconfig";
+		config.value[6] = "/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/lib/pkgconfig:/sdcard/C4droid_EXT/lib/pkgconfig:/data/data/com.n0n3m4.droidc/usr/lib/pkgconfig";
 		config.name[7] = "CC";
 		config.value[7] = "/data/data/com.n0n3m4.droidc/files/gcc/bin/arm-linux-androideabi-gcc";
 		config.name[8] = "CXX";
@@ -262,11 +262,13 @@ char *line;
 	char *command;
 	struct SHEBANG *execFile;
 	execFile=(struct SHEBANG*)xmalloc(sizeof(struct SHEBANG));
+	
 	line=replace(line,"~",getenv("HOME"));
 	if(!line){
 		printf("ERROR:allocate memmory for replace()\n");
 		return 0;
 	}
+	
 	char *origline=dupstr(line);
 	static char syscom[1024];
 	
