@@ -40,6 +40,7 @@ install-libtool:
 
 install-readline:
 	if ! [ -f $(sPREFIX)/lib/libreadline.a ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/libreadline6.3/C4droid_EXT.tar.gz;fi;
+		if ! [ -f $(iPREFIX)/usr/lib/libreadline.la ]; then cd $(iPREFIX) && $(TAR) -mzxf $(PWD)/App/libreadline6.3/usr.tar.gz;fi;
 
 install-xml2:
 	if ! [ -f $(sPREFIX)/lib/libxml2.a ]; then cd /mnt/sdcard && $(TAR) -mzxf $(PWD)/App/Xml2/C4droid_EXT.tar.gz;fi;
