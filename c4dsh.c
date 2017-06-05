@@ -136,9 +136,9 @@ int main(int argc, char **argv)
 		config.name[2] = "CONFIG_SHELL";
 		config.value[2] = "sh";
 		config.name[3] = "CFLAGS";
-		config.value[3] = "-Os -s -std=c99 -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
+		config.value[3] = "-Os -s -std=c99 -DANDROID -D__ANDROID__ -Dlinux -D__linux__ -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
 		config.name[4] = "CXXFLAGS";
-		config.value[4] = "-Os -s -std=c++11 -DANDROID -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
+		config.value[4] = "-Os -s -std=c++11 -DANDROID -D__ANDROID__ -Dlinux -D__linux__ -I/sdcard/C4droid_EXT/include -I/data/data/com.n0n3m4.droidc/files/gcc/arm-linux-androideabi/include/ncurses -I/data/data/com.n0n3m4.droidc/usr/include -L/data/data/com.n0n3m4.droidc/usr/lib -L/sdcard/C4droid_EXT/lib";
 		config.name[5] = "LDFLAGS";
 		config.value[5] = "-lm -ldl -llog -lz -lncurses -L/sdcard/C4droid_EXT/lib -L/data/data/com.n0n3m4.droidc/usr/lib -Wl,-allow-shlib-undefined";
 		config.name[6]= "PKG_CONFIG_PATH";
